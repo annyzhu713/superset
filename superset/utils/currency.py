@@ -81,7 +81,7 @@ def detect_currency_from_df(
 
     unique_currencies = df[currency_column].dropna().astype(str).str.upper().unique()
 
-    if len(unique_currencies) == 1:
+    if len(unique_currencies) >= 1:
         return str(unique_currencies[0])
 
     return None
