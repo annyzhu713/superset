@@ -95,6 +95,7 @@ class Tag(CoreTag, AuditMixinNullable):
     name = Column(String(250), unique=True)
     type = Column(Enum(TagType))
     description = Column(Text)
+    color = Column(String(7), nullable=False)
 
     objects = relationship(
         "TaggedObject", back_populates="tag", overlaps="objects,tags"
