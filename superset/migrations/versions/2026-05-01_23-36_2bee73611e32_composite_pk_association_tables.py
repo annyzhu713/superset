@@ -143,7 +143,7 @@ def _delete_null_fk_rows(conn: Connection, t: AssociationTable) -> int:
     affected table — see ``TABLES_WITH_NULLABLE_FKS`` above for the rationale.
     """
     tbl = _table_clause(t)
-    stmt = sa.delete(tbl).where(sa.and_(tbl.c[t.fk1].is_(None), tbl.c[t.fk2].is_(None)))
+    stmt = sa.delete(tbl).where(sa.or_(tbl.c[t.fk1].is_(None), tbl.c[t.fk2].is_(None)))
     result = conn.execute(stmt)
     n = result.rowcount or 0
     if n:
