@@ -127,10 +127,10 @@ def _check_no_external_fks_to_id(conn: Connection) -> None:
 
 
 def _table_clause(t: AssociationTable) -> sa.sql.expression.TableClause:
-    """Build a lightweight SQLAlchemy ``TableClause`` for ``t`` exposing the
-    columns the helper queries reference (``id``, ``fk1``, ``fk2``). Used so
-    that the dedupe / cleanup / assert SQL can be expressed via SQLAlchemy
-    core constructs rather than via string interpolation."""
+    """Build a lightweight SQLAlchemy ``TableClause`` for ``t``, exposing the
+    columns the helper queries reference (``id``, ``fk1``, ``fk2``). Lets the
+    dedupe / cleanup / assert SQL be expressed via SQLAlchemy core constructs
+    rather than via string interpolation."""
     return sa.table(t.name, sa.column("id"), sa.column(t.fk1), sa.column(t.fk2))
 
 
@@ -204,9 +204,9 @@ def _dedupe_by_min_id(conn: Connection, t: AssociationTable) -> int:
 def _assert_no_duplicates(conn: Connection, t: AssociationTable) -> None:
     """Raise ``RuntimeError`` if any ``(t.fk1, t.fk2)`` duplicate group remains.
 
-    Called after ``_dedupe_by_min_id`` to surface silent dialect-dependent
-    dedupe failures (e.g., a MySQL syntax issue) as an actionable error
-    before the PK-add fires with a less-helpful constraint-violation message.
+    Called after ``_dedupe_by_min_id`` to surface a silent, dialect-dependent
+    dedupe failure (e.g., a MySQL syntax issue) as an actionable error before
+    the PK-add fires with a less-helpful constraint-violation message.
     """
     tbl = _table_clause(t)
     duplicate_groups = (
@@ -376,9 +376,9 @@ def upgrade() -> None:
         # that no longer has ``id``), and ``downgrade`` can't run either
         # (the revision was never stamped) — recovery would need manual
         # surgery. A converted table is identified by the absent ``id``
-        # column; skipping it makes re-running the upgrade safe on every
+        # column; skipping it makes re-running the upgrade safe across every
         # dialect (Postgres/SQLite wrap the migration in a transaction, so
-        # the guard is simply never hit there).
+        # this guard never triggers there).
         if "id" not in {c["name"] for c in insp.get_columns(t.name)}:
             logger.info(
                 "%s: already converted (no surrogate id column); skipping",
