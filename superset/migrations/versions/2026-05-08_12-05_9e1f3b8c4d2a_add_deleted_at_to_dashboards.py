@@ -110,7 +110,7 @@ def downgrade() -> None:
 
 
 def _add_deleted_at_column() -> None:
-    add_columns(TABLE_NAME, Column("deleted_at", DateTime(), nullable=True))
+    add_columns(TABLE_NAME, Column("deleted_at", DateTime(), nullable=False))
     create_index(TABLE_NAME, DELETED_AT_INDEX_NAME, ["deleted_at"])
 
 
